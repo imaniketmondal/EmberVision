@@ -1,0 +1,35 @@
+{
+  "name": "express-hello-world",
+  "version": "1.0.0",
+  "description": "Express Hello World on Render",
+  "main": "app.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/render-examples/express-hello-world.git"
+  },
+  "author": "Render Developers",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "start": "node app.js --expose-gc"
+  },
+  "dependencies": {
+    "@tensorflow/tfjs": "^4.22.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "jimp": "^1.6.0",
+    "jpeg-js": "^0.4.4",
+    "node-fetch": "^3.3.2",
+    "request": "^2.88.2",
+    "twilio": "^5.5.2"
+  },
+  "engines": {
+    "node": ">=14"
+  },
+  "keywords": [],
+  "bugs": {
+    "url": "https://github.com/render-examples/express-hello-world/issues"
+  },
+  "homepage": "https://github.com/render-examples/express-hello-world#readme"
+}

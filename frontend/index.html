@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Live Fire Detector</title>
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+  <style>
+    #myMap {
+      height: 500px;
+      width: 100%;
+      border-radius: 10px;
+    }
+
+    #box {
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    h1 {
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div id="myMap"></div>
+
+  <div id="box">
+    <h1>🔥 Live Fire Detector</h1>
+    <h3>Move the map to the area you want to scan</h3>
+    <button onclick="getScanned()">Scan</button>
+    <p><strong>Coordinates:</strong> <span id="coordsDisplay">Waiting...</span></p>
+    <h2>Result: <span id="result">Not scanned yet</span></h2>
+
+    <!-- 📤 Send report button -->
+    <button onclick="sendReport()">Send Report to Admin</button>
+    <p id="reportStatus"></p>
+  </div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <script>
+    let lastLat = null;
+    let lastLon = null;
+    let lastResult = "Not scanned yet";
+
+    const map = L.map("myMap").setView([20.5937, 78.9629], 5);
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19,
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    async function getScanned() {
+      const center = map.getCenter();
+      const zoom = map.getZoom();
+
+      const lat = center.lat.toFixed(4);
+      const lon = center.lng.toFixed(4);
+      lastLat = lat;
+      lastLon = lon;
+
+      document.getElementById("coordsDisplay").innerText = `${lat}, ${lon} (Zoom: ${zoom})`;
+
+      try {
+        const res = await axios.get(`http://localhost:5000/api/${lat}/${lon}/${zoom}`);
+        console.log(res.data);
+        lastResult = res.data.fireDetection;
+        document.getElementById("result").innerText = lastResult;
+      } catch (err) {
+        console.error("Fetch error:", err);
+        lastResult = "❌ Error fetching data";
+        document.getElementById("result").innerText = lastResult;
+      }
+    }
+
+    async function sendReport() {
+      if (!lastLat || !lastLon || lastResult === "Not scanned yet") {
+        alert("⚠️ Please scan a location before sending a report.");
+        return;
+      }
+
+      try {
+        const res = await axios.post("http://localhost:5000/report", {
+          lat: lastLat,
+          lon: lastLon,
+          result: lastResult
+        });
+        document.getElementById("reportStatus").innerText = "✅ Report sent successfully!";
+        console.log(res.data);
+      } catch (err) {
+        console.error("Report error:", err);
+        document.getElementById("reportStatus").innerText = "❌ Failed to send report.";
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+<div id="map" style="height: 500px;"></div>
+<button id="scanBtn">Scan</button>
+<p id="result">Result:</p>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script>
+  const map = L.map('map').setView([20, 78], 5);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+  document.querySelector('#scanBtn').addEventListener('click', async () => {
+    const center = map.getCenter();
+    const zoom = map.getZoom();
+    const lat = center.lat.toFixed(6);
+    const lon = center.lng.toFixed(6);
+
+    document.getElementById('result').innerText = 'Scanning...';
+
+    try {
+      const res = await fetch(`/api/${lat}/${lon}/${zoom}`);
+      const data = await res.json();
+      const confidence = parseFloat(data.data[0]).toFixed(4);
+      document.getElementById('result').innerText = `🔥 Fire confidence: ${confidence}`;
+    } catch (error) {
+      document.getElementById('result').innerText = 'Error detecting fire.';
+      console.error(error);
+    }
+  });
+</script>
