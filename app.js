@@ -8,13 +8,13 @@ const app = express();
 app.use(cors());
 
 // 🔐 Replace with your actual Twilio credentials
-const accountSid = "AC1f99fe71a8cd7532611f89b64ef327a5";
-const authToken = "3a97696dee625907e0cdfa6f51ffacc8";
+const accountSid = " Replace with your actual Twilio credential";
+const authToken = " Replace with your actual Twilio credential";
 const client = twilio(accountSid, authToken);
 
 // 🔁 Replace with your Twilio phone number and verified recipient number
-const fromNumber = "+19203521150"; // Twilio number
-const toNumber = "+917021362932"; // Your phone number
+const fromNumber = " Twilio number";
+const toNumber = "Your phone number"; 
 
 const fireProneCoords = [
   { lat: 21.9435, lon: 86.3300 }, // Simlipal, Odisha
